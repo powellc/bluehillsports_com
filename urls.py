@@ -1,17 +1,21 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
+from django.views.static import serve
+from unipath import FSPath as Path
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Example:
-    # (r'^bluehillsports_com/', include('bluehillsports_com.foo.urls')),
+if settings.DEBUG:
+    urlpatterns = patterns('', 
+        (r'^m/(?P<path>.*)$', serve, 
+            {'document_root' : Path(__file__).parent.child("media")}),
+    )
+else:
+    urlpatterns = patterns('',)
 
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # (r'^admin/(.*)', admin.site.root),
+urlpatterns += patterns('',
+    (r'^', include('athletics.urls')),
+    (r'^admin/', include(admin.site.urls)),
+    
 )
